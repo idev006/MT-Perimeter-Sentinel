@@ -2,7 +2,7 @@
 
 | Document ID | MPS-SYS-REQ-001 |
 |---|---|
-| Version | 1.2 |
+| Version | 1.3 |
 | Status | BASELINED |
 
 `Verification`: UT=unit, CT=contract, IT=integration, SIM=simulation, HIL=hardware-in-loop, FIELD=field.
@@ -30,9 +30,17 @@
 | REQ-COV-001 | Planned maintenance/update actions **shall** be blocked when projected coverage falls below configured minimum policy. | UT/SIM/FIELD |
 | REQ-FUS-001 | Sensor fusion **shall** avoid treating repeated observations from the same sensor type as independent corroboration. | UT/FIELD |
 | REQ-FUS-002 | Invalid, stale or future-dated sensor observations **shall not** increase fusion confidence. | UT/FIELD |
+| REQ-FUS-003 | A single noisy or isolated sensor trigger **shall not**, by itself, create a confirmed intrusion incident; confirmation policy shall require configured corroboration across sensor type, time, node, or directional evidence. | UT/SIM/FIELD |
+| REQ-DET-001 | For the defined field intrusion scenario set, the accepted pilot configuration **shall achieve at least 80% detection effectiveness** before expansion to additional perimeter sides. | FIELD |
+| REQ-FP-001 | Normal environmental conditions including direct sun/thermal transitions, wind, rain, normal vegetation movement, pole movement within the installation tolerance, and common small-animal/insect activity **shall not cause sustained confirmed-intrusion alarms**. | FIELD/SOAK |
+| REQ-ENV-001 | Outdoor node electronics **shall** be protected against expected rain, humidity/condensation, solar heating, insects and UV exposure; enclosure temperature/humidity shall be measured during acceptance testing. | HIL/FIELD |
+| REQ-MECH-001 | Sensor mounting **shall** be mechanically stable enough that expected wind-induced movement of the bamboo pole/weather shield does not produce unacceptable false alarm behavior. | FIELD |
 | REQ-PWR-001 | Detection **shall** remain prioritized during backup/low/critical power while unsafe OTA/nonessential work is inhibited by policy. | UT/HIL |
 | REQ-CCOC-001 | CCOC **shall** distinguish perimeter operational health from external Internet connectivity. | UT/IT/HIL |
 | REQ-CCOC-002 | CCOC **shall** expose incidents, node/gateway health, coverage status, queue/backlog and audit-relevant command outcomes. | IT/HIL |
 | REQ-REL-001 | The system **shall** fail soft: loss of a single noncritical component shall not silently disable the entire perimeter. | SIM/HIL/FIELD |
 | REQ-REL-002 | The system **shall** report DEGRADED/FAULT truthfully when required capability is unavailable. | UT/HIL |
 | REQ-VV-001 | Operational authorization **shall require** HIL and field evidence; host/simulation evidence alone is insufficient. | Review |
+
+## Reliability release rule
+Failure of REQ-DET-001, REQ-FP-001, REQ-ENV-001 or REQ-MECH-001 blocks expansion beyond the current pilot. The response is to tune or redesign sensing, mounting, enclosure or fusion behavior—not to hide/suppress evidence or simply add more nodes.
