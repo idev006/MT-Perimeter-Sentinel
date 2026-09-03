@@ -14,14 +14,15 @@ class WirelessProfileManager {
   const std::optional<std::string>& candidate() const { return candidate_; }
 
   bool stage(const std::string& profile) {
-    if (profile.empty() || profile == active_) return false;
+    if (profile.empty() || profile == active_) {
+      candidate_.reset();
+      return false;
+    }
     candidate_ = profile;
     return true;
   }
 
-  bool test_candidate(bool trusted_gateway_ok) const {
-    return candidate_.has_value() && trusted_gateway_ok;
-  }
+  bool test_candidate(bool trusted_gateway_ok) const { return candidate_.has_value() && trusted_gateway_ok; }
 
   bool commit_candidate() {
     if (!candidate_) return false;

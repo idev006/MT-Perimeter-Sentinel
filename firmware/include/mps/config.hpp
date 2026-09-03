@@ -13,23 +13,22 @@ struct Config {
 
 class TransactionalConfig {
  public:
-  explicit TransactionalConfig(Config active) : active_(std::move(active)) {
-    validate(active_);
-  }
+  explicit TransactionalConfig(Config active) : active_(std::move(active)) { validate(active_); }
 
   const Config& active() const { return active_; }
   const std::optional<Config>& candidate() const { return candidate_; }
 
   bool stage_candidate(const Config& candidate) {
     validate(candidate);
-    if (candidate.version <= active_.version) return false;
+    if (candidate.version <= active_.version) {
+      candidate_.reset();
+      return false;
+    }
     candidate_ = candidate;
     return true;
   }
 
-  bool test_candidate(bool connectivity_ok) const {
-    return candidate_.has_value() && connectivity_ok;
-  }
+  bool test_candidate(bool connectivity_ok) const { return candidate_.has_value() && connectivity_ok; }
 
   bool commit_candidate() {
     if (!candidate_) return false;

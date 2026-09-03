@@ -2,7 +2,7 @@
 
 | Document ID | MPS-SYS-REQ-001 |
 |---|---|
-| Version | 1.1 |
+| Version | 1.2 |
 | Status | BASELINED |
 
 `Verification`: UT=unit, CT=contract, IT=integration, SIM=simulation, HIL=hardware-in-loop, FIELD=field.
@@ -15,6 +15,7 @@
 | REQ-COMM-002 | Delivery **shall** tolerate retries without duplicate event/incident processing. | UT/IT/HIL |
 | REQ-COMM-003 | Critical events **shall** preserve globally unique event identity, source, monotonically increasing source sequence, original occurrence time, priority and schema version. | CT/HIL |
 | REQ-COMM-004 | Replay processing **shall** detect duplicate, stale and sequence-gap conditions. | UT/IT |
+| REQ-COMM-005 | Sequence-gap handling **shall** allow retransmission of missing events to advance a contiguous delivery watermark without discarding later out-of-order observations. | UT/IT/HIL |
 | REQ-CFG-001 | Critical configuration changes **shall** support stage/test/commit and rollback to a last-known-good configuration. | UT/HIL |
 | REQ-NET-001 | Wireless credential/AP migration **shall** use make-before-break where technically feasible and shall not revoke the last-known-good profile before the candidate is verified against a trusted gateway. | UT/HIL |
 | REQ-NET-002 | Loss of Internet **shall not** by itself stop local sensing, local event buffering/correlation or local CCOC status. | IT/SIM/HIL |
@@ -24,6 +25,8 @@
 | REQ-SEC-001 | Privileged commands **shall** be default-deny, role-authorized, idempotent where required, and auditable. | UT/IT/HIL |
 | REQ-SEC-002 | Authenticated message envelopes **shall** detect tampering and replay; host reference uses HMAC-SHA-256 and target implementation shall use an approved ESP-IDF cryptographic primitive/key-protection design. | UT/HIL |
 | REQ-SEC-003 | Secrets/private keys/production credentials **shall not** be committed to the repository or logged in plaintext. | Review/HIL |
+| REQ-SEC-004 | Audit records **shall not** persist raw secret-bearing privileged-command payloads. | UT/Review |
+| REQ-RES-001 | Long-running embedded queues/replay windows **shall** be bounded or governed by explicit retention, and resource pressure/rejection that can affect mission traffic **shall** be observable. | UT/HIL |
 | REQ-COV-001 | Planned maintenance/update actions **shall** be blocked when projected coverage falls below configured minimum policy. | UT/SIM/FIELD |
 | REQ-FUS-001 | Sensor fusion **shall** avoid treating repeated observations from the same sensor type as independent corroboration. | UT/FIELD |
 | REQ-FUS-002 | Invalid, stale or future-dated sensor observations **shall not** increase fusion confidence. | UT/FIELD |

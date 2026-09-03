@@ -27,9 +27,11 @@ class BoundedQueue final : public IEventStore {
     if (worst != items_.end() &&
         static_cast<int>(e.priority) < static_cast<int>(worst->priority)) {
       *worst = e;
+      ++evicted_count_;
       sort_by_priority();
       return true;
     }
+    ++rejected_count_;
     return false;
   }
 
@@ -46,6 +48,8 @@ class BoundedQueue final : public IEventStore {
 
   std::size_t size() const override { return items_.size(); }
   std::size_t capacity() const { return cap_; }
+  std::size_t evicted_count() const { return evicted_count_; }
+  std::size_t rejected_count() const { return rejected_count_; }
 
  private:
   void sort_by_priority() {
@@ -55,6 +59,8 @@ class BoundedQueue final : public IEventStore {
   }
 
   std::size_t cap_;
+  std::size_t evicted_count_{0};
+  std::size_t rejected_count_{0};
   std::deque<Event> items_;
 };
 

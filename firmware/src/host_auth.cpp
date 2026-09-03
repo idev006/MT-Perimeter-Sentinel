@@ -4,20 +4,23 @@
 #include <iomanip>
 #include <sstream>
 #include <stdexcept>
-#include <utility>
 
 namespace mps {
 namespace {
+std::string field(const std::string& value) {
+  return std::to_string(value.size()) + ":" + value;
+}
+
 std::string canonical(const Event& event, const std::string& nonce, std::int64_t issued_ms) {
   std::ostringstream out;
   out << event.schema_version << '|'
-      << event.id << '|'
-      << event.source << '|'
+      << field(event.id) << '|'
+      << field(event.source) << '|'
       << event.sequence << '|'
       << static_cast<int>(event.priority) << '|'
-      << event.type << '|'
+      << field(event.type) << '|'
       << event.occurred_ms << '|'
-      << nonce << '|'
+      << field(nonce) << '|'
       << issued_ms;
   return out.str();
 }
@@ -38,7 +41,7 @@ std::string hmac_hex(const std::string& key, const std::string& message) {
 }  // namespace
 
 OpenSslHmacSha256Authenticator::OpenSslHmacSha256Authenticator(std::string key) : key_(std::move(key)) {
-  if (key_.empty()) throw std::invalid_argument("HMAC key must not be empty");
+  if (key_.size() < 16) throw std::invalid_argument("HMAC reference key must be at least 16 bytes");
 }
 
 std::string OpenSslHmacSha256Authenticator::sign(const Event& event,

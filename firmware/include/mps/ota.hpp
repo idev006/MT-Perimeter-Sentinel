@@ -16,6 +16,7 @@ class SafeOta {
 
   bool stage(const std::string& candidate, bool signature_ok, bool compatible) {
     if (candidate.empty() || candidate == active_ || !signature_ok || !compatible) {
+      candidate_.reset();
       state_ = OtaState::FAILED;
       return false;
     }
