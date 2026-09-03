@@ -2,6 +2,31 @@
 #include "mps/queue.hpp"
 #include <iostream>
 #include <vector>
+
 using namespace mps;
-struct Tx: ITransport{bool up=false;std::vector<Event> sent;bool available()const override{return up;}bool send(const Event&e)override{if(!up)return false;sent.push_back(e);return true;}};
-int main(){Tx t;BoundedQueue q(64);NodeCore n(t,q);for(int i=0;i<16;++i)n.submit(Event{"evt"+std::to_string(i),"N"+std::to_string(i+1),static_cast<unsigned long long>(i+1),Priority::P0,"INTRUSION",i});std::cout<<"pending_before="<<q.size()<<"\n";t.up=true;auto r=n.replay();std::cout<<"replayed="<<r<<" pending_after="<<q.size()<<" delivered="<<t.sent.size()<<"\n";return(q.size()==0&&t.sent.size()==16)?0:1;}
+
+struct GatewayTransport final : ITransport {
+  bool up{false};
+  std::vector<Event> delivered;
+  bool available() const override { return up; }
+  SendResult send(const Event& event) override {
+    if (!up) return {false, DeliveryState::FAILED};
+    delivered.push_back(event);
+    return {true, DeliveryState::DURABLE_LOCAL};
+  }
+};
+
+int main() {
+  GatewayTransport transport;
+  BoundedQueue queue(64);
+  NodeCore node(transport, queue);
+  for (int i=0;i<16;++i) {
+    const auto sequence=static_cast<std::uint64_t>(i+1);
+    if(!node.submit(Event{"evt"+std::to_string(i+1),"N"+std::to_string(i+1),sequence,Priority::P0,"INTRUSION",i,1})) return 1;
+  }
+  std::cout<<"pending_before="<<queue.size()<<'\n';
+  transport.up=true;
+  const auto replayed=node.replay();
+  std::cout<<"replayed="<<replayed<<" pending_after="<<queue.size()<<" delivered="<<transport.delivered.size()<<'\n';
+  return (queue.size()==0&&transport.delivered.size()==16)?0:1;
+}

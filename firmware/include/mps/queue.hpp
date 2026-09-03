@@ -2,20 +2,60 @@
 #include "ports.hpp"
 #include <algorithm>
 #include <deque>
+#include <stdexcept>
+
 namespace mps {
-class BoundedQueue final: public IEventStore {
+
+class BoundedQueue final : public IEventStore {
  public:
-  explicit BoundedQueue(std::size_t capacity):cap_(capacity){}
+  explicit BoundedQueue(std::size_t capacity) : cap_(capacity) {
+    if (capacity == 0) throw std::invalid_argument("queue capacity must be > 0");
+  }
+
   bool push(const Event& e) override {
-    if(items_.size()<cap_){items_.push_back(e); sort(); return true;}
-    auto worst=std::max_element(items_.begin(),items_.end(),[](const Event&a,const Event&b){return static_cast<int>(a.priority)<static_cast<int>(b.priority);});
-    if(worst!=items_.end() && static_cast<int>(e.priority)<static_cast<int>(worst->priority)){*worst=e; sort(); return true;}
+    if (items_.size() < cap_) {
+      items_.push_back(e);
+      sort_by_priority();
+      return true;
+    }
+
+    auto worst = std::max_element(
+        items_.begin(), items_.end(), [](const Event& a, const Event& b) {
+          return static_cast<int>(a.priority) < static_cast<int>(b.priority);
+        });
+
+    if (worst != items_.end() &&
+        static_cast<int>(e.priority) < static_cast<int>(worst->priority)) {
+      *worst = e;
+      sort_by_priority();
+      return true;
+    }
     return false;
   }
-  std::optional<Event> pop() override { if(items_.empty()) return std::nullopt; auto e=items_.front(); items_.pop_front(); return e; }
+
+  std::optional<Event> peek() const override {
+    if (items_.empty()) return std::nullopt;
+    return items_.front();
+  }
+
+  bool pop() override {
+    if (items_.empty()) return false;
+    items_.pop_front();
+    return true;
+  }
+
   std::size_t size() const override { return items_.size(); }
+  std::size_t capacity() const { return cap_; }
+
  private:
-  void sort(){ std::stable_sort(items_.begin(),items_.end(),[](const Event&a,const Event&b){return static_cast<int>(a.priority)<static_cast<int>(b.priority);}); }
-  std::size_t cap_; std::deque<Event> items_;
+  void sort_by_priority() {
+    std::stable_sort(items_.begin(), items_.end(), [](const Event& a, const Event& b) {
+      return static_cast<int>(a.priority) < static_cast<int>(b.priority);
+    });
+  }
+
+  std::size_t cap_;
+  std::deque<Event> items_;
 };
-}
+
+}  // namespace mps
