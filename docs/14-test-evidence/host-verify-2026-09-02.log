@@ -1,0 +1,34 @@
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+-- The CXX compiler identification is GNU 14.2.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Configuring done (0.2s)
+-- Generating done (0.0s)
+-- Build files have been written to: /mnt/data/MT-Perimeter-Sentinel/build
+cmake --build build -j2
+gmake[1]: Entering directory '/mnt/data/MT-Perimeter-Sentinel/build'
+[ 16%] Building CXX object CMakeFiles/mps.dir/firmware/src/mps.cpp.o
+[ 33%] Linking CXX static library libmps.a
+[ 33%] Built target mps
+[ 50%] Building CXX object CMakeFiles/mps_tests.dir/tests/test_main.cpp.o
+[ 66%] Building CXX object CMakeFiles/mps_sim.dir/simulator/main.cpp.o
+[ 83%] Linking CXX executable mps_sim
+[ 83%] Built target mps_sim
+[100%] Linking CXX executable mps_tests
+[100%] Built target mps_tests
+gmake[1]: Leaving directory '/mnt/data/MT-Perimeter-Sentinel/build'
+ctest --test-dir build --output-on-failure
+Internal ctest changing into directory: /mnt/data/MT-Perimeter-Sentinel/build
+Test project /mnt/data/MT-Perimeter-Sentinel/build
+    Start 1: mps_tests
+1/1 Test #1: mps_tests ........................   Passed    0.00 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.00 sec
+./build/mps_sim
+pending_before=16
+replayed=16 pending_after=0 delivered=16
