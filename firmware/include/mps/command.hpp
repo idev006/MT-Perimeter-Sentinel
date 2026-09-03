@@ -10,7 +10,7 @@ namespace mps {
 
 struct AuditRecord {
   std::string command_id;
-  std::string payload;
+  Action action{Action::VIEW_STATUS};
   std::string result;
   bool replayed{false};
 };
@@ -44,11 +44,11 @@ class AuditedCommandService {
                       Role role,
                       Action action) {
     if (!authorized(role, action)) {
-      audit_.push_back({id, payload, "DENIED", false});
+      audit_.push_back({id, action, "DENIED", false});
       throw std::runtime_error("command not authorized");
     }
     auto [result, replayed] = journal_.execute_once_with_status(id, payload);
-    audit_.push_back({id, payload, result, replayed});
+    audit_.push_back({id, action, result, replayed});
     return result;
   }
 
