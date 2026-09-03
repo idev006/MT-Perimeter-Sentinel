@@ -1,5 +1,7 @@
-# Recovery Notice
+# Recovery / Provenance Notice
 
-This repository package was reconstructed on 2026-09-02 from the project's approved architectural principles, requirements, test policies, and conversation-derived SSOT after the prior runtime-mounted source tree was no longer available.
+Earlier conversation-session working storage lost portions of the original source/document tree. The GitHub repository was reconstructed from retained project requirements, architecture decisions and validated reference behavior, then independently audited and remediated.
 
-It is a functional reconstruction, **not** a byte-for-byte recovery of prior files or Git history. Re-run verification before use and treat hardware/field claims as unverified until physical evidence is collected.
+This repository is therefore the authoritative **current baseline**, but it is not represented as a byte-for-byte recovery of every historical file that existed before the storage loss.
+
+From 2026-09-03 onward, `idev006/MT-Perimeter-Sentinel` is the durable SSOT. Material work must be committed here frequently. Production secrets/private keys must never be committed.
